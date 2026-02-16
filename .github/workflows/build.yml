@@ -9,40 +9,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1
+      - uses: arduino/setup-arduino-cli@v1
 
       - name: Install ESP32 Core
         run: |
           arduino-cli core update-index
           arduino-cli core install esp32:esp32
 
-      - name: Prepare Sketch
-        run: |
-          mkdir sketch
-          cp esp32-accesspoint.ino sketch/sketch.ino
-
       - name: Compile
         run: |
-          arduino-cli compile --fqbn esp32:esp32:esp32 sketch
-
-      - name: List Build Files (DEBUG)
-        run: |
-          echo "====== ROOT ======"
-          ls -R
-          echo "====== SKETCH ======"
-          ls -R sketch
-          echo "====== BUILD ======"
-          ls -R sketch/build || true
+          arduino-cli compile \
+            --fqbn esp32:esp32:esp32 \
+            --output-dir build \
+            .
 
       - name: Upload Firmware
         uses: actions/upload-artifact@v4
         with:
           name: firmware
-          path: |
-            sketch/build/**/*.bin
-            sketch/build/**/**/*.bin
-          if-no-files-found: warn
+          path: build/*.bin
