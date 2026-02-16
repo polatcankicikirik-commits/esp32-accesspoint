@@ -20,12 +20,14 @@ jobs:
           arduino-cli core update-index
           arduino-cli core install esp32:esp32
 
-      - name: Compile
+       - name: Compile
         run: |
-          arduino-cli compile --fqbn esp32:esp32:esp32 .
+          mkdir sketch
+          cp esp32-accesspoint.ino sketch/sketch.ino
+          arduino-cli compile --fqbn esp32:esp32:esp32 sketch
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: firmware
-          path: build/*
+          path: sketch/build/*
