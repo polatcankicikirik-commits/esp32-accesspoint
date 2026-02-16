@@ -9,24 +9,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1
+      - uses: arduino/setup-arduino-cli@v1
 
-      - name: Install ESP32 Core
+      - name: Install ESP32 core
         run: |
           arduino-cli core update-index
           arduino-cli core install esp32:esp32
 
-       - name: Compile
+      - name: Prepare Sketch
         run: |
           mkdir sketch
           cp esp32-accesspoint.ino sketch/sketch.ino
+
+      - name: Compile
+        run: |
           arduino-cli compile --fqbn esp32:esp32:esp32 sketch
 
-      - name: Upload Artifact
+      - name: Upload Firmware
         uses: actions/upload-artifact@v4
         with:
           name: firmware
